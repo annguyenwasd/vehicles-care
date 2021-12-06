@@ -18,6 +18,7 @@ export function FormInput(props: Props) {
   return (
     <View>
       <Controller
+        name={name}
         control={control}
         rules={rules}
         render={({ field: { onChange, onBlur, value } }) => (
@@ -29,7 +30,6 @@ export function FormInput(props: Props) {
             {...rest}
           />
         )}
-        name={name}
       />
       <HelperText type="error" visible={!!errors[name]} onPressIn={noop} onPressOut={noop}>
         {errors[name]?.message ?? 'Something went wrong!!!'}

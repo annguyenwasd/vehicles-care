@@ -15,7 +15,7 @@ const noop = () => { };
 export function FormPhotoPicker(props: Props) {
   const { name = 'photo', rules, style, placeholder = null } = props;
   const { field: { value }, fieldState } = useController({ name, rules });
-  const {setValue} = useFormContext()
+  const { setValue } = useFormContext()
 
   const handlePickPhoto = async () => {
     let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -26,7 +26,7 @@ export function FormPhotoPicker(props: Props) {
     }
 
     const pickerResult = await ImagePicker.launchImageLibraryAsync();
-   setValue(name, pickerResult) 
+    setValue(name, pickerResult)
   };
 
   return (

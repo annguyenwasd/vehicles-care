@@ -1,9 +1,5 @@
 import * as React from "react";
-import {
-  Image,
-  StyleSheet,
-  Modal,
-} from "react-native";
+import { Image, StyleSheet, Modal } from "react-native";
 import { Text, View } from "../../../components/Themed";
 import * as ImagePicker from "expo-image-picker";
 import { useForm, FormProvider } from "react-hook-form";
@@ -11,17 +7,16 @@ import { FormInput } from "../../../components/FormInput";
 import { Button } from "react-native-paper";
 import { FormDatePicker } from "../../../components/FormDatePicker";
 import { FormPhotoPicker } from "../../../components/FormPhotoPicker";
+import { useStorage } from "../../../hooks/useStorage";
 
-type CreateMotorbikeType = {
+type Motorbike = {
   name: string;
   purchaseDate?: Date;
-  thumbnail?: ImagePicker.ImagePickerResult | null
+  thumbnail?: ImagePicker.ImagePickerResult | null;
 };
 
 export const CreateMotorbike = () => {
-
-
-  const methods = useForm<CreateMotorbikeType>({
+  const methods = useForm<Motorbike>({
     defaultValues: {
       thumbnail: null,
       name: "",
@@ -29,16 +24,22 @@ export const CreateMotorbike = () => {
     }
   });
   const { handleSubmit } = methods;
-
-  const onSubmit = data => {
-    console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
-    console.log(data);
-  };
+  const { item, setItem } = useStorage("@motorbikes", {
+    defaultValue: {}
+  });
 
   const [isModalVisible, setModalVisible] = React.useState(true);
 
   const handleShowModal = () => setModalVisible(true);
   const handleCloseModal = () => setModalVisible(false);
+
+  const onSubmit = (data: Motorbike) => {
+    const id = Date.now().toString()
+    const payload = Object.assign(item, { [id]: { id, ...data } })
+    setItem(payload).then(() => {
+      handleCloseModal();
+    });
+  };
 
   return (
     <FormProvider {...methods}>
@@ -58,10 +59,13 @@ export const CreateMotorbike = () => {
           </View>
 
           <View style={styles.thumbnailContainer}>
-            <FormPhotoPicker name="thumbnail" style={styles.photo} 
-            placeholder={
-              <Image style={styles.photo} source={require("./scooter.png")} />
-            } />
+            <FormPhotoPicker
+              name="thumbnail"
+              style={styles.photo}
+              placeholder={
+                <Image style={styles.photo} source={require("./scooter.png")} />
+              }
+            />
           </View>
 
           <FormInput

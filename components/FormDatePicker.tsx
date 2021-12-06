@@ -1,5 +1,5 @@
 import React from "react";
-import { useController } from "react-hook-form";
+import { Controller, useController, useFormContext } from "react-hook-form";
 import { View } from "react-native";
 import { HelperText } from "react-native-paper";
 import DateTimePicker, { AndroidNativeProps, IOSNativeProps, WindowsNativeProps } from "@react-native-community/datetimepicker";
@@ -14,19 +14,30 @@ const noop = () => { };
 
 export function FormDatePicker(props: FormDatePickerProps) {
   const { name = 'date', rules, style, ...rest } = props;
-  const { field: { value, ref, ...restField }, fieldState } = useController({ name, rules });
+  const { control, formState: { errors, ...x }, getValues } = useFormContext()
 
   return (
     <View style={style}>
-      <DateTimePicker
-        mode="date"
-        display="default"
-        value={value}
-        {...restField}
-        {...rest}
+
+      <Controller
+        name={name}
+        control={control}
+        rules={rules}
+        render={({ field: { onChange, value } }) => (
+          <DateTimePicker
+            mode="date"
+            display="default"
+            onChange={(_, date:Date) => {
+              onChange(date)
+            }
+            }
+            value={new Date(value)}
+            {...rest}
+          />
+        )}
       />
-      <HelperText type="error" visible={!!fieldState.error} onPressIn={noop} onPressOut={noop}>
-        {fieldState.error?.message ?? 'Something went wrong!!!'}
+      <HelperText type="error" visible={!!errors[name]} onPressIn={noop} onPressOut={noop}>
+        {errors[name]?.message ?? 'Something went wrong!!!'}
       </HelperText>
     </View>
   );
