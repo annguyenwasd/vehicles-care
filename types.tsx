@@ -6,6 +6,7 @@
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import * as ImagePicker from "expo-image-picker";
 
 declare global {
   namespace ReactNavigation {
@@ -33,3 +34,14 @@ export type RootTabScreenProps<Screen extends keyof RootTabParamList> = Composit
   BottomTabScreenProps<RootTabParamList, Screen>,
   NativeStackScreenProps<RootStackParamList>
 >;
+
+export type Motorbike = {
+  name: string;
+  purchaseDate?: Date;
+  thumbnail?: ImagePicker.ImagePickerResult | null;
+};
+
+export type MotorbikeMap = {
+ [key:string]: Motorbike; 
+};
+

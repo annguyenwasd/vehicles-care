@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Image, StyleSheet, Modal } from "react-native";
+import { Image, StyleSheet, Modal, ModalProps } from "react-native";
 import { Text, View } from "../../../components/Themed";
 import * as ImagePicker from "expo-image-picker";
 import { useForm, FormProvider } from "react-hook-form";
@@ -8,14 +8,12 @@ import { Button } from "react-native-paper";
 import { FormDatePicker } from "../../../components/FormDatePicker";
 import { FormPhotoPicker } from "../../../components/FormPhotoPicker";
 import { useStorage } from "../../../hooks/useStorage";
+import { Motorbike } from "../../../types";
 
-type Motorbike = {
-  name: string;
-  purchaseDate?: Date;
-  thumbnail?: ImagePicker.ImagePickerResult | null;
-};
+interface Props extends ModalProps {}
 
-export const CreateMotorbike = () => {
+export const CreateMotorbike = (props:Props) => {
+  const {onRequestClose=()=>{}}=props;
   const methods = useForm<Motorbike>({
     defaultValues: {
       thumbnail: null,
@@ -28,32 +26,26 @@ export const CreateMotorbike = () => {
     defaultValue: {}
   });
 
-  const [isModalVisible, setModalVisible] = React.useState(true);
-
-  const handleShowModal = () => setModalVisible(true);
-  const handleCloseModal = () => setModalVisible(false);
-
   const onSubmit = (data: Motorbike) => {
     const id = Date.now().toString()
     const payload = Object.assign(item, { [id]: { id, ...data } })
     setItem(payload).then(() => {
-      handleCloseModal();
+    onRequestClose() 
+     
     });
   };
 
   return (
     <FormProvider {...methods}>
-      <Button onPress={handleShowModal}>show Modal</Button>
       <Modal
         animationType="slide"
         presentationStyle="formSheet"
         transparent={false}
-        visible={isModalVisible}
-        onRequestClose={handleCloseModal}
+       {...props} 
       >
         <View style={styles.modal}>
           <View style={styles.modalHeader}>
-            <Button onPress={handleCloseModal}>Cancel</Button>
+            <Button onPress={onRequestClose}>Cancel</Button>
             <Text>Create Motorbike</Text>
             <Button onPress={handleSubmit(onSubmit)}>Save</Button>
           </View>

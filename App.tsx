@@ -4,6 +4,7 @@ import { Provider as PaperProvider } from "react-native-paper";
 
 import useCachedResources from "./hooks/useCachedResources";
 import { CreateMotorbike } from "./screens/motorbike-management/create/CreateMotorbike";
+import { ListMotorbike } from "./screens/motorbike-management/list/ListMotorbike";
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -14,7 +15,7 @@ export default function App() {
     return (
       <PaperProvider>
         <SafeAreaProvider>
-          <CreateMotorbike />
+          <ListMotorbike visible={true}  />
         </SafeAreaProvider>
       </PaperProvider>
     );

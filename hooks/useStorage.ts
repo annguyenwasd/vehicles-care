@@ -5,8 +5,15 @@ type Option = {
   defaultValue?: any;
 };
 
-export const useStorage = (key: string, options: Option) => {
-  const [item, setItem] = React.useState();
+interface HookResult<T> {
+  item: T;
+  setItem: (item: T) => Promise<void>;
+  getItem: () => Promise<T>;
+}
+
+export function useStorage<T>(key: string, options: Option): HookResult<T> {
+  const [item, setItem] = React.useState<T>(options.defaultValue);
+  const { defaultValue } = options;
 
   const setStorage = async (value: any) => {
     try {
@@ -20,7 +27,11 @@ export const useStorage = (key: string, options: Option) => {
   const getStorage = async () => {
     try {
       const jsonValue = await AsyncStorage.getItem(key);
-      return jsonValue != null ? JSON.parse(jsonValue) : null;
+      return jsonValue != null
+        ? JSON.parse(jsonValue)
+        : defaultValue
+          ? defaultValue
+          : null;
     } catch (e) {
       console.error(e);
     }
@@ -29,7 +40,6 @@ export const useStorage = (key: string, options: Option) => {
   React.useEffect(() => {
     getStorage().then(value => {
       setItem(value);
-      const { defaultValue } = options;
 
       // in case no value saved
       if (!value && defaultValue) {
@@ -39,5 +49,5 @@ export const useStorage = (key: string, options: Option) => {
     });
   }, []);
 
-  return { setItem: setStorage, item };
+  return { setItem: setStorage, item, getItem: getStorage };
 };
