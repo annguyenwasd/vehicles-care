@@ -37,6 +37,7 @@ export type RootTabScreenProps<Screen extends keyof RootTabParamList> = Composit
 
 export type Motorbike = {
   name: string;
+  plateNumber: string;
   purchaseDate?: Date;
   thumbnail?: ImagePicker.ImagePickerResult | null;
 };

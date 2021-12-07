@@ -3,7 +3,7 @@ import { Image, StyleSheet, Modal, ModalProps } from "react-native";
 import { Text, View } from "../../../components/Themed";
 import { useForm, FormProvider } from "react-hook-form";
 import { FormInput } from "../../../components/FormInput";
-import { Button } from "react-native-paper";
+import { Button, Title } from "react-native-paper";
 import { FormDatePicker } from "../../../components/FormDatePicker";
 import { FormPhotoPicker } from "../../../components/FormPhotoPicker";
 import { useStorage } from "../../../hooks/useStorage";
@@ -17,6 +17,7 @@ export const CreateMotorbike = (props:Props) => {
     defaultValues: {
       thumbnail: null,
       name: "",
+      plateNumber: "",
       purchaseDate: new Date()
     }
   });
@@ -50,7 +51,7 @@ export const CreateMotorbike = (props:Props) => {
         <View style={styles.modal}>
           <View style={styles.modalHeader}>
             <Button onPress={onRequestClose}>Cancel</Button>
-            <Text>Create Motorbike</Text>
+            <Title>Create Motorbike</Title>
             <Button onPress={handleSubmit(onSubmit)}>Save</Button>
           </View>
 
@@ -68,6 +69,10 @@ export const CreateMotorbike = (props:Props) => {
             name="name"
             placeholder="Motorbike name"
             rules={{ required: "Name is required" }}
+          />
+          <FormInput
+            name="plateNumber"
+            placeholder="Plate number"
           />
           <View style={styles.purchaseDateContainer}>
             <Text style={styles.purchaseDateText}>Purchase date:</Text>
