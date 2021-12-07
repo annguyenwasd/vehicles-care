@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Image, StyleSheet, Modal, ModalProps } from "react-native";
 import { Text, View } from "../../../components/Themed";
-import * as ImagePicker from "expo-image-picker";
 import { useForm, FormProvider } from "react-hook-form";
 import { FormInput } from "../../../components/FormInput";
 import { Button } from "react-native-paper";
@@ -35,12 +34,17 @@ export const CreateMotorbike = (props:Props) => {
     });
   };
 
+  const handleDismiss= () => {
+    methods.reset()
+  }
+
   return (
     <FormProvider {...methods}>
       <Modal
         animationType="slide"
         presentationStyle="formSheet"
         transparent={false}
+        onDismiss={handleDismiss}
        {...props} 
       >
         <View style={styles.modal}>
