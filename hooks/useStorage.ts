@@ -27,11 +27,15 @@ export function useStorage<T>(key: string, options: Option): HookResult<T> {
   const getStorage = async () => {
     try {
       const jsonValue = await AsyncStorage.getItem(key);
-      return jsonValue != null
+      const result = jsonValue != null
         ? JSON.parse(jsonValue)
         : defaultValue
           ? defaultValue
           : null;
+
+
+          setItem(result)
+          return result;
     } catch (e) {
       console.error(e);
     }

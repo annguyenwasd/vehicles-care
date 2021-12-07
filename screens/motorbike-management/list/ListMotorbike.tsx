@@ -14,13 +14,14 @@ export const ListMotorbike = (props: Props) => {
     defaultValue: {}
   });
 
-  const motorbikes=Object.entries(item ?? {})
+  const motorbikes = Object.entries(item ?? {})
 
   const [isModalVisible, setModalVisible] = React.useState(false);
 
   const handleShowModal = () => setModalVisible(true);
   const handleCloseModal = () => {
     setModalVisible(false);
+    getItem()
   }
 
   const handleRemoveMotorbike = (id: string) => {
