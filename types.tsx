@@ -46,3 +46,8 @@ export type MotorbikeMap = {
  [key:string]: Motorbike; 
 };
 
+export type Item = {
+  name: string;
+  icon?: any
+};
+

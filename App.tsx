@@ -1,10 +1,14 @@
-import React from "react";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import { Provider as PaperProvider } from "react-native-paper";
+import React from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { Provider as PaperProvider } from 'react-native-paper';
 
-import useCachedResources from "./hooks/useCachedResources";
-import { CreateMotorbike } from "./screens/motorbike-management/create/CreateMotorbike";
-import { ListMotorbike } from "./screens/motorbike-management/list/ListMotorbike";
+import useCachedResources from './hooks/useCachedResources';
+import { CreateMotorbike } from './screens/motorbike-management/create/CreateMotorbike';
+import { ListMotorbike } from './screens/motorbike-management/list/ListMotorbike';
+import { CreateRecord } from './screens/record-management/create/CreateRecord';
+import { CreateItem } from './screens/item-management/create/CreateItem';
+import { NavigationContainer } from '@react-navigation/native';
+import { CreateItemStack } from './screens/item-management/create/CreateItemStack';
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -13,11 +17,13 @@ export default function App() {
     return null;
   } else {
     return (
-      <PaperProvider>
-        <SafeAreaProvider>
-          <ListMotorbike visible={true}  />
-        </SafeAreaProvider>
-      </PaperProvider>
+      <NavigationContainer>
+        <PaperProvider>
+          <SafeAreaProvider>
+<CreateItemStack />
+          </SafeAreaProvider>
+        </PaperProvider>
+      </NavigationContainer>
     );
   }
 }
