@@ -19,7 +19,7 @@ import {
 
 export const ListItem = (props: ListItemStackScreenProps<'ListItem'>) => {
   const {
-    navigation: { navigate,  addListener },
+    navigation: { navigate, addListener },
   } = props;
   const { item, setItem, getItem } = useStorage<ItemRecord>('@items', {
     defaultValue: {},
@@ -28,7 +28,7 @@ export const ListItem = (props: ListItemStackScreenProps<'ListItem'>) => {
 
   const [visible, setVisible] = React.useState(false);
 
-  const hideDialog = ()=> setVisible(false)
+  const hideDialog = () => setVisible(false);
 
   const items = Object.entries(item ?? {});
 
@@ -37,7 +37,7 @@ export const ListItem = (props: ListItemStackScreenProps<'ListItem'>) => {
       const { [selectedId.current]: removed, ...otherMotorbikes } = item;
       setItem(otherMotorbikes);
       selectedId.current = null;
-      hideDialog()
+      hideDialog();
     }
   };
 
@@ -63,15 +63,21 @@ export const ListItem = (props: ListItemStackScreenProps<'ListItem'>) => {
         <ScrollView>
           {items.map(([id, item], index, list) => {
             const isNotLast = list.length - 1 !== index;
+            let metadata: string | string[] = [];
+            if (item.kmInterval.enabled)
+              metadata.push(`${item.kmInterval.value} km`);
+            if (item.timeInterval.enabled)
+              metadata.push(
+                `${item.timeInterval.value} ${
+                  timeOptionMap[item.timeInterval.unit]
+                }`
+              );
+            metadata = metadata.join(' / ');
             return (
               <View key={id}>
                 <List.Item
                   title={item.name}
-                  description={`${
-                    item.kmInterval.enabled ? item.kmInterval.value : 'N/A'
-                  } km / ${
-                    item.timeInterval.enabled ? item.timeInterval.value : 'N/A'
-                  } ${timeOptionMap[item.timeInterval.unit]}`}
+                  description={metadata}
                   onPress={() => handleGoToDetail(item)}
                   left={() => (
                     <Image style={styles.thumbnail} source={item?.icon} />
@@ -106,7 +112,7 @@ export const ListItem = (props: ListItemStackScreenProps<'ListItem'>) => {
             <Paragraph>Do you really want to remove this item?</Paragraph>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={()=> hideDialog()}>Calcel</Button>
+            <Button onPress={() => hideDialog()}>Calcel</Button>
             <Button onPress={() => handleRemoveMotorbike()}>OK</Button>
           </Dialog.Actions>
         </Dialog>
