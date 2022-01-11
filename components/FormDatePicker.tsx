@@ -1,16 +1,14 @@
 import React from "react";
 import { Controller, useController, useFormContext } from "react-hook-form";
 import { View } from "react-native";
-import { HelperText } from "react-native-paper";
 import DateTimePicker, { AndroidNativeProps, IOSNativeProps, WindowsNativeProps } from "@react-native-community/datetimepicker";
+import { HelperText } from "./HelperText";
 
 type Props = IOSNativeProps | AndroidNativeProps | WindowsNativeProps | any;
 type FormDatePickerProps = Omit<Props, 'value'> & {
   name: string;
   rules?: any;
 }
-
-const noop = () => { };
 
 export function FormDatePicker(props: FormDatePickerProps) {
   const { name = 'date', rules, style, ...rest } = props;
@@ -36,7 +34,7 @@ export function FormDatePicker(props: FormDatePickerProps) {
           />
         )}
       />
-      <HelperText type="error" visible={!!errors[name]} onPressIn={noop} onPressOut={noop}>
+      <HelperText type="error" visible={!!errors[name]}>
         {errors[name]?.message ?? 'Something went wrong!!!'}
       </HelperText>
     </View>

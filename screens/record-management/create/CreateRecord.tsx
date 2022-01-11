@@ -1,120 +1,113 @@
-import * as React from "react";
-import { Image, StyleSheet, Modal, ModalProps } from "react-native";
-import { Text, View } from "../../../components/Themed";
-import { useForm, FormProvider } from "react-hook-form";
-import { FormInput } from "../../../components/FormInput";
-import { Button, Title } from "react-native-paper";
-import { FormDatePicker } from "../../../components/FormDatePicker";
-import { FormPhotoPicker } from "../../../components/FormPhotoPicker";
-import { useStorage } from "../../../hooks/useStorage";
-import { Motorbike } from "../../../types";
+import * as React from 'react';
+import { Image, StyleSheet, ModalProps, TouchableOpacity } from 'react-native';
+import { View } from '../../../components/Themed';
+import { useForm, FormProvider, Controller } from 'react-hook-form';
+import { FormInput } from '../../../components/FormInput';
+import { Button, Title } from 'react-native-paper';
+import { useStorage } from '../../../hooks/useStorage';
+import { Item, Motorbike } from '../../../types';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface Props extends ModalProps {}
 
-export const CreateRecord = (props:Props) => {
-  const {onRequestClose=()=>{}}=props;
-  const methods = useForm<Motorbike>({
+export const CreateRecord = (props: Props) => {
+  const { onRequestClose = () => {}, navigation, route } = props;
+  const methods = useForm<Item>({
     defaultValues: {
-      thumbnail: null,
-      name: "",
-      plateNumber: "",
-      purchaseDate: new Date()
-    }
+      name: '',
+      icon: require('./icons/part-30.png'),
+    },
   });
-  const { handleSubmit } = methods;
-  const { item, setItem } = useStorage("@motorbikes", {
-    defaultValue: {}
+  const { handleSubmit, control, setValue } = methods;
+  const { items, setItem } = useStorage('@items', {
+    defaultValue: {},
   });
 
+  React.useEffect(() => {
+    if (route?.params?.icon) setValue('icon', route.params.icon);
+  }, [route?.params?.icon]);
+
   const onSubmit = (data: Motorbike) => {
-    const id = Date.now().toString()
-    const payload = Object.assign(item, { [id]: { id, ...data } })
+    const id = Date.now().toString();
+    const payload = Object.assign(items, { [id]: { id, ...data } });
+
     setItem(payload).then(() => {
-    onRequestClose() 
-     
+      onRequestClose();
+      navigation.goBack()
     });
   };
 
-  const handleDismiss= () => {
-    methods.reset()
-  }
+  const handleDismiss = () => {
+    methods.reset();
+  };
+
+  const handleNavigatePickIcon = () => {
+    navigation.navigate('Icons');
+  };
 
   return (
     <FormProvider {...methods}>
-      <Modal
-        animationType="slide"
-        presentationStyle="formSheet"
-        transparent={false}
-        onDismiss={handleDismiss}
-       {...props} 
-      >
-        <View style={styles.modal}>
-          <View style={styles.modalHeader}>
-            <Button onPress={onRequestClose}>Cancel</Button>
-            <Title>Create Record</Title>
-            <Button onPress={handleSubmit(onSubmit)}>Save</Button>
-          </View>
+      <View style={styles.modal}>
+        <View style={styles.modalHeader}>
+          <Button onPress={onRequestClose}>Cancel</Button>
+          <Title>Create Item</Title>
+          <Button onPress={handleSubmit(onSubmit)}>Save</Button>
+        </View>
 
-          <View style={styles.thumbnailContainer}>
-            <FormPhotoPicker
-              name="thumbnail"
-              style={styles.photo}
-              placeholder={
-                <Image style={styles.photo} source={require("./scooter.png")} />
-              }
+        <View style={styles.nameContainer}>
+          <Controller
+            name="icon"
+            control={control}
+            rules={{ required: 'Icon is required' }}
+            render={({ field: { value } }) => (
+              <TouchableOpacity
+                style={styles.iconContainer}
+                onPress={handleNavigatePickIcon}
+              >
+                <Image style={styles.icon} source={value} />
+              </TouchableOpacity>
+            )}
+          />
+          <View style={styles.name}>
+            <FormInput
+              name="name"
+              placeholder="Item name"
+              rules={{ required: 'Name is required' }}
             />
           </View>
-
-          <FormInput
-            name="name"
-            placeholder="Motorbike name"
-            rules={{ required: "Name is required" }}
-          />
-          <FormInput
-            name="plateNumber"
-            placeholder="Plate number"
-          />
-          <View style={styles.purchaseDateContainer}>
-            <Text style={styles.purchaseDateText}>Purchase date:</Text>
-            <FormDatePicker name="purchaseDate" style={styles.purchaseDate} />
-          </View>
         </View>
-      </Modal>
+      </View>
     </FormProvider>
   );
 };
 
 const styles = StyleSheet.create({
-  thumbnailContainer: {
-    alignItems: "center",
-    marginBottom: 20
+  nameContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
-  mainColumn: {
-    flex: 1,
-    flexDirection: "column",
-    paddingLeft: 8,
-    justifyContent: "flex-start"
+  name: { flex: 1, marginLeft: 20 },
+  iconContainer: {
+    width: 50,
+    height: 50,
   },
-  photo: {
-    width: 200,
-    height: 200
+  icon: {
+    width: 50,
+    height: 50,
+    margin: 10,
+    borderRadius: 5,
+    borderWidth: 1,
+    padding: 5,
   },
-  submitButton: { marginTop: 8 },
   modal: {
     padding: 20,
-    alignItems: "stretch"
+    alignItems: 'stretch',
+    flex: 1,
   },
   modalHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 40
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 40,
   },
-  purchaseDateContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start"
-  },
-  purchaseDate: { width: 200 },
-  purchaseDateText: { marginTop: 10 }
 });

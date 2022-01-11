@@ -9,8 +9,8 @@ import {
   StyleSheet,
   ImageProps,
 } from 'react-native';
-import { HelperText } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
+import { HelperText } from './HelperText';
 
 interface Props extends Omit<ImageProps, 'source'> {
   name: string;
@@ -46,7 +46,6 @@ export function FormPhotoPicker(props: Props) {
 
     const { width, height, ...pickerResult } =
       await ImagePicker.launchImageLibraryAsync();
-    console.log(`pickerResult`, pickerResult);
     setValue(name, pickerResult);
   };
 
@@ -58,7 +57,7 @@ export function FormPhotoPicker(props: Props) {
         ) : (
           <View style={styles.thumbnailContainer}>
             {placeholder}
-            <HelperText type="info" visible onPressIn={noop} onPressOut={noop}>
+            <HelperText type="info" visible>
               {placeholderText}
             </HelperText>
           </View>
@@ -67,8 +66,6 @@ export function FormPhotoPicker(props: Props) {
       <HelperText
         type="error"
         visible={!!fieldState.error}
-        onPressIn={noop}
-        onPressOut={noop}
       >
         {fieldState.error?.message ?? 'Something went wrong!!!'}
       </HelperText>

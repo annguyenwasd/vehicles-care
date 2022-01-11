@@ -12,25 +12,27 @@ import {
 import { View, Text } from '../../../components/Themed';
 import { Button, Caption, Title } from 'react-native-paper';
 import { useStorage } from '../../../hooks/useStorage';
-import { CreateMotorbike } from '../create/CreateMotorbike';
-import { Motorbike, MotorbikeRecord } from '../../../types';
+import { ItemRecord, Motorbike, MotorbikeRecord } from '../../../types';
 import moment from 'moment';
 
 interface Props extends ModalProps {}
 
-export const ListMotorbike = (props: Props) => {
-  const { onRequestClose = () => {} } = props;
-  const { items, setItem, getItem } = useStorage<MotorbikeRecord>('@motorbikes', {
+export const ListRecord = (props: Props) => {
+  const {
+    onRequestClose = () => {},
+    navigation: { navigate, goBack, addListener },
+  } = props;
+  const { items, setItem, getItem } = useStorage<ItemRecord>('@items', {
     defaultValue: {},
   });
 
-  const motorbikes = Object.entries(items ?? {});
+  const items = Object.entries(items ?? {});
 
   const [isModalVisible, setModalVisible] = React.useState(false);
 
-  const handleShowModal = () => setModalVisible(true);
+  const handleShowModal = () => navigate('CreateItemStack');
   const handleCloseModal = () => {
-    setModalVisible(false);
+    goBack();
     getItem();
   };
 
@@ -40,25 +42,28 @@ export const ListMotorbike = (props: Props) => {
   };
 
   const handleGoToDetail = (motor: Motorbike) => {
-    console.log('go to detail', motor.name);
+    navigate('Icons');
   };
+
+  React.useEffect(() => {
+    const unsubscribe = addListener('focus', () => {
+      getItem();
+    });
+
+    return unsubscribe;
+  }, []);
 
   return (
     <View>
-      <Modal
-        animationType="slide"
-        presentationStyle="formSheet"
-        transparent={false}
-        {...props}
-      >
-        <View style={styles.modal}>
-          <View style={styles.modalHeader}>
-            <Button onPress={handleCloseModal}>Close</Button>
-            <Title>List Motorbike</Title>
-            <Button onPress={() => {}}>Edit</Button>
-          </View>
+      <View style={styles.modal}>
+        <View style={styles.modalHeader}>
+          <Button onPress={handleCloseModal}>Close</Button>
+          <Title>List Item</Title>
+          <Button onPress={() => {}}>Edit</Button>
+        </View>
 
-          {motorbikes.map(([id, _motor]) => {
+        <ScrollView style={{ maxHeight: '83%' }}>
+          {items.map(([id, _motor]) => {
             const motor = _motor as Motorbike;
             return (
               <TouchableOpacity
@@ -66,23 +71,9 @@ export const ListMotorbike = (props: Props) => {
                 style={styles.motorbikeContainer}
                 onPress={() => handleGoToDetail(motor)}
               >
-                <Image
-                  style={styles.thumbnail}
-                  source={motor?.thumbnail ?? require('../create/scooter.png')}
-                />
+                <Image style={styles.thumbnail} source={motor?.icon} />
                 <View style={styles.infoContainer}>
                   <Text style={styles.name}>{motor.name}</Text>
-                  {motor.plateNumber && (
-                    <Button icon="numeric" style={styles.info}>
-                      <Caption>{motor.plateNumber}</Caption>
-                    </Button>
-                  )}
-                  {motor.purchaseDate && (
-                    <Button icon="calendar" style={styles.info}>
-                      <Caption>{`Purchased on: `}</Caption>
-                      <Caption>{moment(motor.purchaseDate).format('DD-MM-YYYY')}</Caption>
-                    </Button>
-                  )}
                 </View>
                 <View style={styles.removeContainer}>
                   <Button
@@ -95,25 +86,18 @@ export const ListMotorbike = (props: Props) => {
               </TouchableOpacity>
             );
           })}
+        </ScrollView>
 
-          <Button mode="text" icon="plus" onPress={handleShowModal}>
-            Add Motorbike
-          </Button>
-          <CreateMotorbike
-            visible={isModalVisible}
-            onRequestClose={handleCloseModal}
-          />
-        </View>
-      </Modal>
+        <Button mode="text" icon="plus" onPress={handleShowModal}>
+          Add Item
+        </Button>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  modal: {
-    alignItems: 'stretch',
-    flex: 1,
-  },
+  modal: {},
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -145,7 +129,7 @@ const styles = StyleSheet.create({
   infoContainer: {
     backgroundColor: 'lightgray',
   },
-  info:{
-    alignSelf:'flex-start'
-  }
+  info: {
+    alignSelf: 'flex-start',
+  },
 });

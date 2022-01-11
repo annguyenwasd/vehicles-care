@@ -22,13 +22,13 @@ export const CreateMotorbike = (props:Props) => {
     }
   });
   const { handleSubmit } = methods;
-  const { item, setItem } = useStorage("@motorbikes", {
+  const { items, setItem } = useStorage("@motorbikes", {
     defaultValue: {}
   });
 
   const onSubmit = (data: Motorbike) => {
     const id = Date.now().toString()
-    const payload = Object.assign(item, { [id]: { id, ...data } })
+    const payload = Object.assign(items, { [id]: { id, ...data } })
     setItem(payload).then(() => {
     onRequestClose() 
      

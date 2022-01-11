@@ -4,9 +4,12 @@
  */
 
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
-import { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/native';
+import {
+  CompositeScreenProps,
+  NavigatorScreenParams,
+} from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import * as ImagePicker from "expo-image-picker";
+import * as ImagePicker from 'expo-image-picker';
 
 declare global {
   namespace ReactNavigation {
@@ -20,20 +23,19 @@ export type RootStackParamList = {
   NotFound: undefined;
 };
 
-export type RootStackScreenProps<Screen extends keyof RootStackParamList> = NativeStackScreenProps<
-  RootStackParamList,
-  Screen
->;
+export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
+  NativeStackScreenProps<RootStackParamList, Screen>;
 
 export type RootTabParamList = {
   TabOne: undefined;
   TabTwo: undefined;
 };
 
-export type RootTabScreenProps<Screen extends keyof RootTabParamList> = CompositeScreenProps<
-  BottomTabScreenProps<RootTabParamList, Screen>,
-  NativeStackScreenProps<RootStackParamList>
->;
+export type RootTabScreenProps<Screen extends keyof RootTabParamList> =
+  CompositeScreenProps<
+    BottomTabScreenProps<RootTabParamList, Screen>,
+    NativeStackScreenProps<RootStackParamList>
+  >;
 
 export type Motorbike = {
   name: string;
@@ -42,12 +44,20 @@ export type Motorbike = {
   thumbnail?: ImagePicker.ImagePickerResult | null;
 };
 
-export type MotorbikeMap = {
- [key:string]: Motorbike; 
-};
+export type MotorbikeRecord = Record<string, Motorbike>;
 
 export type Item = {
   name: string;
-  icon?: any
+  icon?: any;
+  timeInterval?: {
+    enabled: boolean;
+    value: number;
+    unit: 'd' | 'y' | 'm';
+  };
+  kmInterval?: {
+    enabled: boolean;
+    value: number;
+  };
 };
 
+export type ItemRecord = Record<string, Item>;

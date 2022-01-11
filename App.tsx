@@ -9,6 +9,9 @@ import { CreateRecord } from './screens/record-management/create/CreateRecord';
 import { CreateItem } from './screens/item-management/create/CreateItem';
 import { NavigationContainer } from '@react-navigation/native';
 import { CreateItemStack } from './screens/item-management/create/CreateItemStack';
+import { ListItem } from './screens/item-management/list/ListItem';
+import { ListItemStack } from './screens/item-management/list/ListItemStack';
+import { KeyboardAccessoryView } from 'react-native-keyboard-accessory'
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -20,7 +23,7 @@ export default function App() {
       <NavigationContainer>
         <PaperProvider>
           <SafeAreaProvider>
-<CreateItemStack />
+            <ListItemStack />
           </SafeAreaProvider>
         </PaperProvider>
       </NavigationContainer>
