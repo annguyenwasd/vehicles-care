@@ -5,12 +5,15 @@ import { useForm, FormProvider, Controller } from 'react-hook-form';
 import { FormInput } from '../../../components/FormInput';
 import { Button, TextInput, Title } from 'react-native-paper';
 import { useStorage } from '../../../hooks/useStorage';
-import { Item, Motorbike } from '../../../types';
+import { CreateItemStackParamList, Item, Motorbike } from '../../../types';
 import { FormSwitch } from '../../../components/FormSwitch';
 import { FormSelect } from '../../../components/FormSelect';
 import { HelperText } from '../../../components/HelperText';
+import { StackScreenProps } from '@react-navigation/stack';
 
-interface Props extends ModalProps {}
+interface Props
+  extends ModalProps,
+    StackScreenProps<CreateItemStackParamList, 'CreateItem'> {}
 
 const timeOptions = [
   { label: 'Days', value: 'd' },
@@ -20,22 +23,24 @@ const timeOptions = [
 
 export const CreateItem = (props: Props) => {
   const { onRequestClose = () => {}, navigation, route } = props;
-  const isEdit = route.params.item;
+  const isEdit = route.params?.item;
 
   const methods = useForm<Item>({
-    defaultValues: isEdit ?route.params.item : {
-      name: '',
-      icon: require('./icons/part-30.png'),
-      timeInterval: {
-        enabled: false,
-        value: 0,
-        unit: 'y',
-      },
-      kmInterval: {
-        enabled: true,
-        value: 0,
-      },
-    },
+    defaultValues: isEdit
+      ? route.params?.item
+      : {
+          name: '',
+          icon: require('./icons/part-30.png'),
+          timeInterval: {
+            enabled: false,
+            value: '0',
+            unit: 'y',
+          },
+          kmInterval: {
+            enabled: true,
+            value: '0',
+          },
+        },
   });
 
   const { handleSubmit, control, setValue, watch } = methods;
@@ -56,7 +61,9 @@ export const CreateItem = (props: Props) => {
     const id = Date.now().toString();
     let payload;
     if (isEdit) {
-      payload = Object.assign(item, { [route.params.item.id]: { ...route.params.item,...data } });
+      payload = Object.assign(item, {
+        [route.params.item.id]: { ...route.params.item, ...data },
+      });
     } else {
       payload = Object.assign(item, { [id]: { id, ...data } });
     }

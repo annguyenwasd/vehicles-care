@@ -12,7 +12,7 @@ import {
 import { View, Text } from '../../../components/Themed';
 import { Button, Caption, Title } from 'react-native-paper';
 import { useStorage } from '../../../hooks/useStorage';
-import { Item, ItemRecord, Motorbike, MotorbikeRecord } from '../../../types';
+import { Item, ItemRecord, Motorbike, MotorbikeRecord, timeOptionMap } from '../../../types';
 import moment from 'moment';
 
 interface Props extends ModalProps {}
@@ -63,8 +63,7 @@ export const ListItem = (props: Props) => {
         </View>
 
         <ScrollView style={{ maxHeight: '83%' }}>
-          {items.map(([id, _item]) => {
-            const item = _item as Motorbike;
+          {items.map(([id, item]: [string, Item]) => {
             return (
               <TouchableOpacity
                 key={id}
@@ -74,6 +73,11 @@ export const ListItem = (props: Props) => {
                 <Image style={styles.thumbnail} source={item?.icon} />
                 <View style={styles.infoContainer}>
                   <Text style={styles.name}>{item.name}</Text>
+
+                <View style={styles.infoContainer}>
+                  {item.kmInterval.enabled && <Text style={styles.metadata}>{`${item.kmInterval.value} km`}</Text>}
+                  {item.timeInterval.enabled && <Text style={styles.metadata} >{item.timeInterval.value}{timeOptionMap[item.timeInterval.unit]}</Text>}
+                </View>
                 </View>
                 <View style={styles.removeContainer}>
                   <Button
@@ -132,4 +136,7 @@ const styles = StyleSheet.create({
   info: {
     alignSelf: 'flex-start',
   },
+  metadata: {
+    color: '#A1A3A5',
+  }
 });

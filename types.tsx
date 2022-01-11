@@ -47,17 +47,30 @@ export type Motorbike = {
 export type MotorbikeRecord = Record<string, Motorbike>;
 
 export type Item = {
+  id?: string;
   name: string;
   icon?: any;
-  timeInterval?: {
+  timeInterval: {
     enabled: boolean;
-    value: number;
+    value: number | string;
     unit: 'd' | 'y' | 'm';
   };
-  kmInterval?: {
+  kmInterval: {
     enabled: boolean;
-    value: number;
+    value: number | string;
   };
 };
 
 export type ItemRecord = Record<string, Item>;
+
+export type CreateItemStackParamList = {
+  CreateItem: { item?: Item, icon: any } | undefined;
+  Icons: undefined;
+};
+
+
+export const timeOptionMap = {
+  'd': ' days',
+  'm': ' months',
+  'y': ' years'
+}
