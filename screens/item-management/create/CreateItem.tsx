@@ -74,7 +74,9 @@ export const CreateItem = (props: CreateItemStackScreenProps<'CreateItem'>) => {
   };
 
   const handleNavigatePickIcon = () => {
-    navigation.navigate('Icons');
+    navigation.navigate('Icons', {
+      item: route.params?.item,
+    });
   };
 
   return (
