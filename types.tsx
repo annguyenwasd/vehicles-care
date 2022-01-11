@@ -9,6 +9,7 @@ import {
   NavigatorScreenParams,
 } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { StackScreenProps } from '@react-navigation/stack';
 import * as ImagePicker from 'expo-image-picker';
 
 declare global {
@@ -64,13 +65,25 @@ export type Item = {
 export type ItemRecord = Record<string, Item>;
 
 export type CreateItemStackParamList = {
-  CreateItem: { item?: Item, icon: any } | undefined;
+  CreateItem: { item?: Item, icon?: any } | undefined;
   Icons: undefined;
 };
 
+export type CreateItemStackScreenProps<Screen extends keyof CreateItemStackParamList> =
+  NativeStackScreenProps<CreateItemStackParamList, Screen>;
+
+export type ListItemStackParamList = {
+  ListItem: undefined,
+  CreateItemStack: CreateItemStackScreenProps<'CreateItem'>
+};
+
+export type ListItemStackScreenProps<Screen extends keyof ListItemStackParamList> =
+  NativeStackScreenProps<ListItemStackParamList, Screen>;
+
+
 
 export const timeOptionMap = {
-  'd': ' days',
-  'm': ' months',
-  'y': ' years'
+  'd': 'days',
+  'm': 'months',
+  'y': 'years'
 }

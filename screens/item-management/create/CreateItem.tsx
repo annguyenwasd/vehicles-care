@@ -5,15 +5,10 @@ import { useForm, FormProvider, Controller } from 'react-hook-form';
 import { FormInput } from '../../../components/FormInput';
 import { Button, TextInput, Title } from 'react-native-paper';
 import { useStorage } from '../../../hooks/useStorage';
-import { CreateItemStackParamList, Item, Motorbike } from '../../../types';
+import { CreateItemStackScreenProps, Item, Motorbike } from '../../../types';
 import { FormSwitch } from '../../../components/FormSwitch';
 import { FormSelect } from '../../../components/FormSelect';
 import { HelperText } from '../../../components/HelperText';
-import { StackScreenProps } from '@react-navigation/stack';
-
-interface Props
-  extends ModalProps,
-    StackScreenProps<CreateItemStackParamList, 'CreateItem'> {}
 
 const timeOptions = [
   { label: 'Days', value: 'd' },
@@ -21,8 +16,8 @@ const timeOptions = [
   { label: 'Years', value: 'y' },
 ];
 
-export const CreateItem = (props: Props) => {
-  const { onRequestClose = () => {}, navigation, route } = props;
+export const CreateItem = (props: CreateItemStackScreenProps<'CreateItem'>) => {
+  const { navigation, route } = props;
   const isEdit = route.params?.item;
 
   const methods = useForm<Item>({
@@ -69,7 +64,6 @@ export const CreateItem = (props: Props) => {
     }
 
     setItem(payload).then(() => {
-      onRequestClose();
       navigation.goBack();
     });
   };

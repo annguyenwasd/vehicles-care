@@ -1,48 +1,52 @@
 import * as React from 'react';
+import { Image, ScrollView, StyleSheet } from 'react-native';
 import {
-  StyleSheet,
-  Modal,
-  Image,
-  ScrollView,
-  FlatList,
-  ModalProps,
-  Pressable,
-  TouchableOpacity,
-} from 'react-native';
-import { View, Text } from '../../../components/Themed';
-import { Button, Caption, Title } from 'react-native-paper';
+  Button,
+  Dialog,
+  Divider,
+  List,
+  Paragraph,
+  Portal,
+} from 'react-native-paper';
+import { View } from '../../../components/Themed';
 import { useStorage } from '../../../hooks/useStorage';
-import { Item, ItemRecord, Motorbike, MotorbikeRecord, timeOptionMap } from '../../../types';
-import moment from 'moment';
+import {
+  Item,
+  ItemRecord,
+  ListItemStackScreenProps,
+  timeOptionMap,
+} from '../../../types';
 
-interface Props extends ModalProps {}
-
-export const ListItem = (props: Props) => {
+export const ListItem = (props: ListItemStackScreenProps<'ListItem'>) => {
   const {
-    onRequestClose = () => {},
-    navigation: { navigate, goBack, addListener },
+    navigation: { navigate,  addListener },
   } = props;
   const { item, setItem, getItem } = useStorage<ItemRecord>('@items', {
     defaultValue: {},
   });
+  const selectedId = React.useRef<string | null>(null);
+
+  const [visible, setVisible] = React.useState(false);
+
+  const hideDialog = ()=> setVisible(false)
 
   const items = Object.entries(item ?? {});
 
-  const [isModalVisible, setModalVisible] = React.useState(false);
-
-  const handleShowModal = () => navigate('CreateItemStack');
-  const handleCloseModal = () => {
-    goBack();
-    getItem();
-  };
-
-  const handleRemoveMotorbike = (id: string) => {
-    const { [id]: removed, ...otherMotorbikes } = item;
-    setItem(otherMotorbikes);
+  const handleRemoveMotorbike = () => {
+    if (selectedId.current) {
+      const { [selectedId.current]: removed, ...otherMotorbikes } = item;
+      setItem(otherMotorbikes);
+      selectedId.current = null;
+      hideDialog()
+    }
   };
 
   const handleGoToDetail = (selectedItem: Item) => {
-    navigate('CreateItemStack', {params: {item: selectedItem}, screen: 'CreateItem'});
+    navigate('CreateItemStack', {
+      // TODO: don't know why type error here
+      params: { item: selectedItem },
+      screen: 'CreateItem',
+    });
   };
 
   React.useEffect(() => {
@@ -56,46 +60,57 @@ export const ListItem = (props: Props) => {
   return (
     <View>
       <View style={styles.modal}>
-        <View style={styles.modalHeader}>
-          <Button onPress={handleCloseModal}>Close</Button>
-          <Title>List Item</Title>
-          <Button onPress={() => {}}>Edit</Button>
-        </View>
-
-        <ScrollView style={{ maxHeight: '83%' }}>
-          {items.map(([id, item]: [string, Item]) => {
+        <ScrollView>
+          {items.map(([id, item], index, list) => {
+            const isNotLast = list.length - 1 !== index;
             return (
-              <TouchableOpacity
-                key={id}
-                style={styles.motorbikeContainer}
-                onPress={() => handleGoToDetail(item)}
-              >
-                <Image style={styles.thumbnail} source={item?.icon} />
-                <View style={styles.infoContainer}>
-                  <Text style={styles.name}>{item.name}</Text>
-
-                <View style={styles.infoContainer}>
-                  {item.kmInterval.enabled && <Text style={styles.metadata}>{`${item.kmInterval.value} km`}</Text>}
-                  {item.timeInterval.enabled && <Text style={styles.metadata} >{item.timeInterval.value}{timeOptionMap[item.timeInterval.unit]}</Text>}
-                </View>
-                </View>
-                <View style={styles.removeContainer}>
-                  <Button
-                    icon="close"
-                    onPress={() => handleRemoveMotorbike(id)}
-                  >
-                    {''}
-                  </Button>
-                </View>
-              </TouchableOpacity>
+              <View key={id}>
+                <List.Item
+                  title={item.name}
+                  description={`${
+                    item.kmInterval.enabled ? item.kmInterval.value : 'N/A'
+                  } km / ${
+                    item.timeInterval.enabled ? item.timeInterval.value : 'N/A'
+                  } ${timeOptionMap[item.timeInterval.unit]}`}
+                  onPress={() => handleGoToDetail(item)}
+                  left={() => (
+                    <Image style={styles.thumbnail} source={item?.icon} />
+                  )}
+                  right={() => (
+                    <Button
+                      icon="close"
+                      onPress={() => {
+                        setVisible(true);
+                        selectedId.current = id;
+                      }}
+                      style={{ marginVertical: 15 }}
+                    >
+                      {''}
+                    </Button>
+                  )}
+                />
+                {isNotLast && <Divider />}
+              </View>
             );
           })}
         </ScrollView>
-
-        <Button mode="text" icon="plus" onPress={handleShowModal}>
-          Add Item
-        </Button>
       </View>
+
+      <Portal>
+        <Dialog visible={visible} onDismiss={hideDialog}>
+          <Dialog.Title onPressIn={() => {}} onPressOut={() => {}}>
+            Remove Alert
+          </Dialog.Title>
+          <Dialog.Content>
+            {/* // TODO: tell them how many records using it */}
+            <Paragraph>Do you really want to remove this item?</Paragraph>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={()=> hideDialog()}>Calcel</Button>
+            <Button onPress={() => handleRemoveMotorbike()}>OK</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </View>
   );
 };
@@ -125,7 +140,6 @@ const styles = StyleSheet.create({
   thumbnail: {
     width: 50,
     height: 50,
-    marginRight: 20,
   },
   name: {
     fontSize: 20,
@@ -137,6 +151,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   metadata: {
-    color: '#A1A3A5',
-  }
+    paddingLeft: 0,
+    paddingRight: 0,
+  },
 });

@@ -1,9 +1,8 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ListItem } from './ListItem';
-import { Icons } from '../create/Icons';
-import { CreateItem } from '../create/CreateItem';
 import { CreateItemStack } from '../create/CreateItemStack';
+import { Button } from 'react-native-paper';
 
 const Stack = createStackNavigator();
 
@@ -14,12 +13,25 @@ export const ListItemStack = () => {
         <Stack.Screen
           name="ListItem"
           component={ListItem}
+          options={({ navigation}) => ({
+            title: 'Items',
+            headerRight:()=> (
+              <Button
+                mode="text"
+                onPress={() => navigation.navigate('CreateItemStack')}
+              >
+                {`Add`}
+              </Button>
+            ),
+          })}
+        />
+        <Stack.Screen
+          name="CreateItemStack"
+          component={CreateItemStack}
           options={{
-            title: 'List Item',
+            headerShown: false,
           }}
         />
-        <Stack.Screen name="CreateItemStack" component={CreateItemStack} options={{
-          headerShown: false}} />
       </Stack.Group>
     </Stack.Navigator>
   );
