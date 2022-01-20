@@ -1,110 +1,114 @@
-import * as React from 'react';
-import {
-  StyleSheet,
-  Modal,
-  Image,
-  ScrollView,
-  FlatList,
-  ModalProps,
-  Pressable,
-  TouchableOpacity,
-} from 'react-native';
-import { View, Text } from '../../../components/Themed';
-import { Button, Caption, Title } from 'react-native-paper';
-import { useStorage } from '../../../hooks/useStorage';
-import { CreateMotorbike } from '../create/CreateMotorbike';
-import { Motorbike, MotorbikeRecord } from '../../../types';
 import moment from 'moment';
+import * as React from 'react';
+import { Image, ScrollView, StyleSheet } from 'react-native';
+import { Button, Dialog, Divider, List, Paragraph, Portal } from 'react-native-paper';
+import { View } from '../../../components/Themed';
+import { useStorage } from '../../../hooks/useStorage';
+import {
+    ListMotorbikeStackScreenProps,
+    Motorbike,
+    MotorbikeRecord
+} from '../../../types';
 
-interface Props extends ModalProps {}
+export const ListMotorbike = (
+  props: ListMotorbikeStackScreenProps<'ListMotorbike'>
+) => {
+  const {
+    navigation: { navigate, addListener },
+  } = props;
 
-export const ListMotorbike = (props: Props) => {
-  const { onRequestClose = () => {} } = props;
-  const { items, setItem, getItem } = useStorage<MotorbikeRecord>('@motorbikes', {
-    defaultValue: {},
-  });
+  const { item, setItem, getItem } = useStorage<MotorbikeRecord>(
+    '@motorbikes',
+    {
+      defaultValue: {},
+    }
+  );
 
-  const motorbikes = Object.entries(items ?? {});
+  const selectedId = React.useRef<string | null>(null);
+  const [isWarinigModalOpen, setOpenWarningModal] = React.useState(false);
 
-  const [isModalVisible, setModalVisible] = React.useState(false);
+  const motorbikes = Object.entries(item ?? {});
 
-  const handleShowModal = () => setModalVisible(true);
-  const handleCloseModal = () => {
-    setModalVisible(false);
-    getItem();
-  };
+  React.useEffect(() => {
+    const unsubscribe = addListener('focus', () => {
+      getItem();
+    });
 
-  const handleRemoveMotorbike = (id: string) => {
-    const { [id]: removed, ...otherMotorbikes } = items;
-    setItem(otherMotorbikes);
-  };
+    return unsubscribe;
+  }, []);
 
   const handleGoToDetail = (motor: Motorbike) => {
-    console.log('go to detail', motor.name);
+    navigate('CreateMotorbikeStack', {
+      // TODO: don't know why type error here
+      params: { motorbike: motor },
+      screen: 'CreateMotorbike',
+    });
   };
 
-  return (
-    <View>
-      <Modal
-        animationType="slide"
-        presentationStyle="formSheet"
-        transparent={false}
-        {...props}
-      >
-        <View style={styles.modal}>
-          <View style={styles.modalHeader}>
-            <Button onPress={handleCloseModal}>Close</Button>
-            <Title>List Motorbike</Title>
-            <Button onPress={() => {}}>Edit</Button>
-          </View>
+  const hideDialog = () => setOpenWarningModal(false);
 
-          {motorbikes.map(([id, _motor]) => {
-            const motor = _motor as Motorbike;
-            return (
-              <TouchableOpacity
-                key={id}
-                style={styles.motorbikeContainer}
+  const handleRemoveMotorbike = () => {
+    if (selectedId.current) {
+      const { [selectedId.current]: removed, ...otherMotorbikes } = item;
+      setItem(otherMotorbikes);
+      selectedId.current = null;
+      hideDialog();
+    }
+  };
+
+
+  return (
+    <View style={styles.modal}>
+      <ScrollView>
+        {motorbikes.map(([id, motor], index, list) => {
+          const isNotLast = list.length - 1 !== index;
+          let metadata: string | string[] = [];
+          if (motor.plateNumber) metadata.push(`No.: ${motor.plateNumber}`);
+          if (motor.purchaseDate)
+            metadata.push(`Bought on: ${moment(motor.purchaseDate).format('DD-MM-YYYY')}`);
+          metadata = metadata.join('\n');
+          return (
+            <View key={id}>
+              <List.Item
+                title={motor.name}
+                description={metadata}
                 onPress={() => handleGoToDetail(motor)}
-              >
-                <Image
-                  style={styles.thumbnail}
-                  source={motor?.thumbnail ?? require('../create/scooter.png')}
-                />
-                <View style={styles.infoContainer}>
-                  <Text style={styles.name}>{motor.name}</Text>
-                  {motor.plateNumber && (
-                    <Button icon="numeric" style={styles.info}>
-                      <Caption>{motor.plateNumber}</Caption>
-                    </Button>
-                  )}
-                  {motor.purchaseDate && (
-                    <Button icon="calendar" style={styles.info}>
-                      <Caption>{`Purchased on: `}</Caption>
-                      <Caption>{moment(motor.purchaseDate).format('DD-MM-YYYY')}</Caption>
-                    </Button>
-                  )}
-                </View>
-                <View style={styles.removeContainer}>
+                left={() => (
+                  <Image style={styles.thumbnail} source={motor?.icon} />
+                )}
+                right={() => (
                   <Button
                     icon="close"
-                    onPress={() => handleRemoveMotorbike(id)}
+                    onPress={() => {
+                      setOpenWarningModal(true);
+                      selectedId.current = id;
+                    }}
+                    style={{ marginVertical: 15 }}
                   >
                     {''}
                   </Button>
-                </View>
-              </TouchableOpacity>
-            );
-          })}
-
-          <Button mode="text" icon="plus" onPress={handleShowModal}>
-            Add Motorbike
-          </Button>
-          <CreateMotorbike
-            visible={isModalVisible}
-            onRequestClose={handleCloseModal}
-          />
-        </View>
-      </Modal>
+                )}
+              />
+              {isNotLast && <Divider />}
+            </View>
+          );
+        })}
+      </ScrollView>
+      <Portal>
+        <Dialog visible={isWarinigModalOpen} onDismiss={hideDialog}>
+          <Dialog.Title onPressIn={() => {}} onPressOut={() => {}}>
+            Remove Motorbike
+          </Dialog.Title>
+          <Dialog.Content>
+            {/* // TODO: tell them how many records using it */}
+            <Paragraph>Do you really want to remove this motorbike?</Paragraph>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => hideDialog()}>Calcel</Button>
+            <Button onPress={() => handleRemoveMotorbike()}>OK</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </View>
   );
 };
@@ -145,7 +149,7 @@ const styles = StyleSheet.create({
   infoContainer: {
     backgroundColor: 'lightgray',
   },
-  info:{
-    alignSelf:'flex-start'
-  }
+  info: {
+    alignSelf: 'flex-start',
+  },
 });

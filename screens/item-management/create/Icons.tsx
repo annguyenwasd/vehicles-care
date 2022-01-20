@@ -1,5 +1,7 @@
 import React from 'react';
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import { IconImage } from '../../../components/IconImage';
+import { CreateItemStackScreenProps } from '../../../types';
 
 const icons = [
   require('./icons/part-1.png'),
@@ -40,8 +42,11 @@ const icons = [
   require('./icons/part-36.png'),
 ];
 
-export const Icons = ({ navigation: { navigate }, onPress, route }) => {
-  const handleSelect = (icon) => {
+export const Icons = ({
+  navigation: { navigate },
+  route,
+}: CreateItemStackScreenProps<'Icons'>) => {
+  const handleSelect = (icon: any) => {
     navigate('CreateItem', { icon, item: route.params?.item });
   };
   return (
@@ -86,11 +91,7 @@ export const Icons = ({ navigation: { navigate }, onPress, route }) => {
   );
 };
 
-const IconImage = ({ icon, onPress }) => (
-  <TouchableOpacity onPress={() => onPress(icon)}>
-    <Image style={styles.icon} source={icon} />
-  </TouchableOpacity>
-);
+
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
@@ -98,13 +99,5 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
     justifyContent: 'space-between',
-  },
-  icon: {
-    width: 50,
-    height: 50,
-    margin: 10,
-    borderRadius: 5,
-    borderWidth: 1,
-    padding: 5,
-  },
+  }
 });

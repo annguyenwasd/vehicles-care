@@ -1,14 +1,15 @@
 import * as React from 'react';
-import { Image, StyleSheet, ModalProps, TouchableOpacity } from 'react-native';
-import { View } from '../../../components/Themed';
-import { useForm, FormProvider, Controller } from 'react-hook-form';
-import { FormInput } from '../../../components/FormInput';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
+import { Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Button, TextInput, Title } from 'react-native-paper';
+import { FormInput } from '../../../components/FormInput';
+import { FormSelect } from '../../../components/FormSelect';
+import { FormSwitch } from '../../../components/FormSwitch';
+import { HelperText } from '../../../components/HelperText';
+import { iconStyles } from '../../../components/IconImage';
+import { View } from '../../../components/Themed';
 import { useStorage } from '../../../hooks/useStorage';
 import { CreateItemStackScreenProps, Item, Motorbike } from '../../../types';
-import { FormSwitch } from '../../../components/FormSwitch';
-import { FormSelect } from '../../../components/FormSelect';
-import { HelperText } from '../../../components/HelperText';
 
 const timeOptions = [
   { label: 'Days', value: 'd' },
@@ -53,13 +54,13 @@ export const CreateItem = (props: CreateItemStackScreenProps<'CreateItem'>) => {
   }, [route?.params?.icon]);
 
   const onSubmit = (data: Motorbike) => {
-    const id = Date.now().toString();
     let payload;
-    if (isEdit) {
+    if (isEdit && route.params?.item?.id) {
       payload = Object.assign(item, {
         [route.params.item.id]: { ...route.params.item, ...data },
       });
     } else {
+      const id = Date.now().toString();
       payload = Object.assign(item, { [id]: { id, ...data } });
     }
 
@@ -98,14 +99,14 @@ export const CreateItem = (props: CreateItemStackScreenProps<'CreateItem'>) => {
                 style={styles.iconContainer}
                 onPress={handleNavigatePickIcon}
               >
-                <Image style={styles.icon} source={value} />
+                <Image style={iconStyles.icon} source={value} />
               </TouchableOpacity>
             )}
           />
           <View style={styles.name}>
             <FormInput
               name="name"
-              label="Name"
+              label="Namei"
               placeholder="E.g: Oil"
               rules={{ required: 'Name is required' }}
             />

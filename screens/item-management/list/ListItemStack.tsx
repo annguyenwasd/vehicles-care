@@ -9,22 +9,22 @@ const Stack = createStackNavigator();
 export const ListItemStack = () => {
   return (
     <Stack.Navigator>
+      <Stack.Screen
+        name="ListItem"
+        component={ListItem}
+        options={({ navigation }) => ({
+          title: 'Items',
+          headerRight: () => (
+            <Button
+              mode="text"
+              onPress={() => navigation.navigate('CreateItemStack')}
+            >
+              {`Add`}
+            </Button>
+          ),
+        })}
+      />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
-        <Stack.Screen
-          name="ListItem"
-          component={ListItem}
-          options={({ navigation}) => ({
-            title: 'Items',
-            headerRight:()=> (
-              <Button
-                mode="text"
-                onPress={() => navigation.navigate('CreateItemStack')}
-              >
-                {`Add`}
-              </Button>
-            ),
-          })}
-        />
         <Stack.Screen
           name="CreateItemStack"
           component={CreateItemStack}

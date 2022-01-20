@@ -13,7 +13,7 @@ export const CreateItemStack = () => {
           name="CreateItem"
           component={CreateItem}
           options={{
-            title: 'Create Item',
+            headerShown: false,
           }}
         />
       </Stack.Group>

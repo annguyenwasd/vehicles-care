@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 const icons = [
   require('./icons/part-1.png'),
@@ -46,10 +39,11 @@ const icons = [
   require('./icons/part-35.png'),
   require('./icons/part-36.png'),
 ];
-export const Icons = ({ navigation: { navigate }, onPress }) => {
-  const handleSelect = (icon)=>{
-    navigate('CreateItem', {icon}) 
-  }
+
+export const Icons = ({ navigation: { navigate }, onPress, route }) => {
+  const handleSelect = (icon) => {
+    navigate('CreateItem', { icon, item: route.params?.item });
+  };
   return (
     <View style={styles.container}>
       <IconImage onPress={handleSelect} icon={icons[0]} />

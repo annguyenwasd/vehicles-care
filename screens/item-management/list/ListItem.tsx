@@ -26,13 +26,13 @@ export const ListItem = (props: ListItemStackScreenProps<'ListItem'>) => {
   });
   const selectedId = React.useRef<string | null>(null);
 
-  const [visible, setVisible] = React.useState(false);
+  const [isWarinigModalOpen, setOpenWarningModal] = React.useState(false);
 
-  const hideDialog = () => setVisible(false);
+  const hideDialog = () => setOpenWarningModal(false);
 
   const items = Object.entries(item ?? {});
 
-  const handleRemoveMotorbike = () => {
+  const handleRemoveItem = () => {
     if (selectedId.current) {
       const { [selectedId.current]: removed, ...otherMotorbikes } = item;
       setItem(otherMotorbikes);
@@ -86,7 +86,7 @@ export const ListItem = (props: ListItemStackScreenProps<'ListItem'>) => {
                     <Button
                       icon="close"
                       onPress={() => {
-                        setVisible(true);
+                        setOpenWarningModal(true);
                         selectedId.current = id;
                       }}
                       style={{ marginVertical: 15 }}
@@ -103,9 +103,9 @@ export const ListItem = (props: ListItemStackScreenProps<'ListItem'>) => {
       </View>
 
       <Portal>
-        <Dialog visible={visible} onDismiss={hideDialog}>
+        <Dialog visible={isWarinigModalOpen} onDismiss={hideDialog}>
           <Dialog.Title onPressIn={() => {}} onPressOut={() => {}}>
-            Remove Alert
+            Remove Item
           </Dialog.Title>
           <Dialog.Content>
             {/* // TODO: tell them how many records using it */}
@@ -113,7 +113,7 @@ export const ListItem = (props: ListItemStackScreenProps<'ListItem'>) => {
           </Dialog.Content>
           <Dialog.Actions>
             <Button onPress={() => hideDialog()}>Calcel</Button>
-            <Button onPress={() => handleRemoveMotorbike()}>OK</Button>
+            <Button onPress={() => handleRemoveItem()}>OK</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>

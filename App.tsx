@@ -11,7 +11,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { CreateItemStack } from './screens/item-management/create/CreateItemStack';
 import { ListItem } from './screens/item-management/list/ListItem';
 import { ListItemStack } from './screens/item-management/list/ListItemStack';
-import { KeyboardAccessoryView } from 'react-native-keyboard-accessory'
+import { KeyboardAccessoryView } from 'react-native-keyboard-accessory';
+import { HomeTab } from './screens/home/HomeTab';
+import { HomeStack } from './screens/home/HomeStack';
+import { ListMotorbikeStack } from './screens/motorbike-management/list/ListMotorbikeStack';
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -23,10 +26,11 @@ export default function App() {
       <NavigationContainer>
         <PaperProvider>
           <SafeAreaProvider>
-            <ListItemStack />
+            <ListMotorbikeStack />
           </SafeAreaProvider>
         </PaperProvider>
       </NavigationContainer>
     );
   }
 }
+

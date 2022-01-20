@@ -9,7 +9,6 @@ import {
   NavigatorScreenParams,
 } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { StackScreenProps } from '@react-navigation/stack';
 import * as ImagePicker from 'expo-image-picker';
 
 declare global {
@@ -39,10 +38,11 @@ export type RootTabScreenProps<Screen extends keyof RootTabParamList> =
   >;
 
 export type Motorbike = {
+  id?: string;
   name: string;
   plateNumber: string;
   purchaseDate?: Date;
-  thumbnail?: ImagePicker.ImagePickerResult | null;
+  icon?: any;
 };
 
 export type MotorbikeRecord = Record<string, Motorbike>;
@@ -65,25 +65,43 @@ export type Item = {
 export type ItemRecord = Record<string, Item>;
 
 export type CreateItemStackParamList = {
-  CreateItem: { item?: Item, icon?: any } | undefined;
-  Icons: undefined;
+  CreateItem: { item?: Item; icon?: any } | undefined;
+  Icons: { item?: Item };
 };
 
-export type CreateItemStackScreenProps<Screen extends keyof CreateItemStackParamList> =
-  NativeStackScreenProps<CreateItemStackParamList, Screen>;
+export type CreateItemStackScreenProps<
+  Screen extends keyof CreateItemStackParamList
+> = NativeStackScreenProps<CreateItemStackParamList, Screen>;
 
 export type ListItemStackParamList = {
-  ListItem: undefined,
-  CreateItemStack: CreateItemStackScreenProps<'CreateItem'>
+  ListItem: undefined;
+  CreateItemStack: CreateItemStackScreenProps<'CreateItem'>;
 };
 
-export type ListItemStackScreenProps<Screen extends keyof ListItemStackParamList> =
-  NativeStackScreenProps<ListItemStackParamList, Screen>;
+export type ListItemStackScreenProps<
+  Screen extends keyof ListItemStackParamList
+> = NativeStackScreenProps<ListItemStackParamList, Screen>;
 
+export type CreateMotorbikeStackParamList = {
+  CreateMotorbike: { motorbike?: Motorbike; icon?: any } | undefined;
+  Icons: { motorbike?: Motorbike};
+};
 
+export type CreateMotorbikeStackScreenProps<
+  Screen extends keyof CreateMotorbikeStackParamList
+> = NativeStackScreenProps<CreateMotorbikeStackParamList, Screen>;
+
+export type ListMotorbikeStackParamList = {
+  ListMotorbike: undefined;
+  CreateMotorbikeStack: CreateMotorbikeStackScreenProps<'CreateMotorbike'>;
+};
+
+export type ListMotorbikeStackScreenProps<
+  Screen extends keyof ListMotorbikeStackParamList
+> = NativeStackScreenProps<ListMotorbikeStackParamList, Screen>;
 
 export const timeOptionMap = {
-  'd': 'days',
-  'm': 'months',
-  'y': 'years'
-}
+  d: 'days',
+  m: 'months',
+  y: 'years',
+};
