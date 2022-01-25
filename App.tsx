@@ -19,14 +19,14 @@ import { ListMotorbikeStack } from './screens/motorbike-management/list/ListMoto
 export default function App() {
   const isLoadingComplete = useCachedResources();
 
-  if (!isLoadingComplete) {
+if (!isLoadingComplete) {
     return null;
   } else {
     return (
       <NavigationContainer>
         <PaperProvider>
           <SafeAreaProvider>
-            <ListMotorbikeStack />
+            <HomeTab />
           </SafeAreaProvider>
         </PaperProvider>
       </NavigationContainer>

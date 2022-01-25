@@ -75,7 +75,7 @@ export type CreateItemStackScreenProps<
 
 export type ListItemStackParamList = {
   ListItem: undefined;
-  CreateItemStack: CreateItemStackScreenProps<'CreateItem'>;
+  CreateItemStack: NavigatorScreenParams<CreateItemStackParamList>
 };
 
 export type ListItemStackScreenProps<
@@ -93,7 +93,7 @@ export type CreateMotorbikeStackScreenProps<
 
 export type ListMotorbikeStackParamList = {
   ListMotorbike: undefined;
-  CreateMotorbikeStack: CreateMotorbikeStackScreenProps<'CreateMotorbike'>;
+  CreateMotorbikeStack: NavigatorScreenParams<CreateMotorbikeStackParamList>
 };
 
 export type ListMotorbikeStackScreenProps<

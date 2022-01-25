@@ -10,15 +10,7 @@ const Stack = createStackNavigator();
 export const HomeStack = () => {
   return (
     <Stack.Navigator>
-      <Stack.Group>
-        <Stack.Screen
-          name="HomeTab"
-          component={HomeTab}
-          options={({ navigation}) => ({
-            title: 'Home',
-            headerShown: false
-          })}
-        />
+      <Stack.Group screenOptions={{ presentation: 'card' }}>
         <Stack.Screen
           name="ListItemStack"
           component={ListItemStack}

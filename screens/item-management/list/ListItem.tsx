@@ -43,7 +43,6 @@ export const ListItem = (props: ListItemStackScreenProps<'ListItem'>) => {
 
   const handleGoToDetail = (selectedItem: Item) => {
     navigate('CreateItemStack', {
-      // TODO: don't know why type error here
       params: { item: selectedItem },
       screen: 'CreateItem',
     });

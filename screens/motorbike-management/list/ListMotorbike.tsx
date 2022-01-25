@@ -39,7 +39,6 @@ export const ListMotorbike = (
 
   const handleGoToDetail = (motor: Motorbike) => {
     navigate('CreateMotorbikeStack', {
-      // TODO: don't know why type error here
       params: { motorbike: motor },
       screen: 'CreateMotorbike',
     });
